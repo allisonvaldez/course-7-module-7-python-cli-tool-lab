@@ -1,5 +1,4 @@
 # cli_tool.py
-
 import argparse
 # Import from models
 from lib.models import Task, User
@@ -12,11 +11,13 @@ def add_task(args):
     # - Check if the user exists, if not, create one
     if args.user not in users:
         users[args.user] = User(args.user)
+    # - Get the user from the dictionary
+    user = users[args.user]        # ✅ moved outside if block
     # - Create a new Task with the given title
-        task = Task(args.title)
+    task = Task(args.title)        # ✅ moved outside if block
     # - Add the task to the user's task list
-        user.add_task(task)
-    
+    user.add_task(task)            # ✅ moved outside if block
+
 # TODO: Implement function to mark a task as complete
 def complete_task(args):
     # - Look up the user by name
@@ -37,19 +38,16 @@ def complete_task(args):
 def main():
     parser = argparse.ArgumentParser(description="Task Manager CLI")
     subparsers = parser.add_subparsers()
-
     # Subparser for adding tasks
     add_parser = subparsers.add_parser("add-task", help="Add a task for a user")
     add_parser.add_argument("user")
     add_parser.add_argument("title")
     add_parser.set_defaults(func=add_task)
-
     # Subparser for completing tasks
     complete_parser = subparsers.add_parser("complete-task", help="Complete a user's task")
     complete_parser.add_argument("user")
     complete_parser.add_argument("title")
     complete_parser.set_defaults(func=complete_task)
-
     args = parser.parse_args()
     if hasattr(args, "func"):
         args.func(args)
